@@ -1,20 +1,27 @@
 import React from "react";
 import { Text, Box } from "ink";
+import { useStore } from "@nanostores/react";
 import { readFileSync } from "node:fs";
+import {
+  highlightedEnv,
+  activePanel,
+  showCommandModal,
+  previewScroll,
+} from "../stores.js";
 
 interface EnvPreviewProps {
-  filePath: string | null;
-  scrollOffset?: number;
-  isActive?: boolean;
-  maxHeight?: number;
+  maxHeight: number;
 }
 
-export function EnvPreview({
-  filePath,
-  scrollOffset = 0,
-  isActive = false,
-  maxHeight,
-}: EnvPreviewProps) {
+export function EnvPreview({ maxHeight }: EnvPreviewProps) {
+  const highlighted = useStore(highlightedEnv);
+  const panel = useStore(activePanel);
+  const modal = useStore(showCommandModal);
+  const scrollOffset = useStore(previewScroll);
+
+  const isActive = panel === "preview" && !modal;
+  const filePath = highlighted?.path || null;
+
   if (!filePath) {
     return (
       <Box flexDirection="column" flexGrow={1} paddingLeft={1}>
@@ -37,7 +44,7 @@ export function EnvPreview({
     const totalLines = lines.length;
 
     // Calculate visible lines
-    const visibleHeight = maxHeight ? maxHeight - 8 : lines.length; // Subtract for borders, title, and footer
+    const visibleHeight = maxHeight - 8; // Subtract for borders, title, and footer
     const visibleLines = lines.slice(
       scrollOffset,
       scrollOffset + visibleHeight,
@@ -59,13 +66,11 @@ export function EnvPreview({
             <Text bold color="cyan">
               Preview:
             </Text>
-            {maxHeight && (
-              <Text dimColor>
-                {scrollOffset + 1}-
-                {Math.min(scrollOffset + visibleHeight, totalLines)} /{" "}
-                {totalLines}
-              </Text>
-            )}
+            <Text dimColor>
+              {scrollOffset + 1}-
+              {Math.min(scrollOffset + visibleHeight, totalLines)} /{" "}
+              {totalLines}
+            </Text>
           </Box>
           <Box flexDirection="column" overflow="hidden">
             {visibleLines.map((line, index) => {

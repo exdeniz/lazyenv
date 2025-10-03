@@ -1,20 +1,19 @@
 import React from "react";
 import { Text, Box } from "ink";
+import { useStore } from "@nanostores/react";
 import SelectInput from "ink-select-input";
+import { commands } from "../stores.js";
 import type { Command } from "../types.js";
 
 interface CommandModalProps {
-  commands: Command[];
   onSelect: (command: Command) => void;
   onClose: () => void;
 }
 
-export function CommandModal({
-  commands,
-  onSelect,
-  onClose,
-}: CommandModalProps) {
-  const items = commands.map((cmd, index) => ({
+export function CommandModal({ onSelect, onClose }: CommandModalProps) {
+  const cmds = useStore(commands);
+
+  const items = cmds.map((cmd, index) => ({
     key: `cmd-${index}`,
     label: cmd.name,
     value: cmd,

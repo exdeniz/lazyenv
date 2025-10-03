@@ -1,32 +1,41 @@
 import React from "react";
 import { Text, Box } from "ink";
+import { useStore } from "@nanostores/react";
 import SelectInput from "ink-select-input";
 import figures from "figures";
+import {
+  envFiles,
+  activePanel,
+  showCommandModal,
+  highlightedEnv,
+  highlightedIndex,
+  leftPanelWidth,
+  setHighlightedEnv,
+} from "../stores.js";
 import type { EnvFile } from "../types.js";
 
 interface EnvSelectorProps {
-  envFiles: EnvFile[];
   onSelect: (file: EnvFile) => void;
-  onHighlight?: (file: EnvFile) => void;
-  isActive?: boolean;
-  highlightedFile?: EnvFile | null;
 }
 
-export function EnvSelector({
-  envFiles,
-  onSelect,
-  onHighlight,
-  isActive = true,
-  highlightedFile,
-}: EnvSelectorProps) {
-  const items = envFiles.map((file, index) => ({
+export function EnvSelector({ onSelect }: EnvSelectorProps) {
+  const files = useStore(envFiles);
+  const panel = useStore(activePanel);
+  const modal = useStore(showCommandModal);
+  const highlighted = useStore(highlightedEnv);
+  const index = useStore(highlightedIndex);
+  const width = useStore(leftPanelWidth);
+
+  const isActive = panel === "selector" && !modal;
+
+  const items = files.map((file, index) => ({
     key: `env-${index}`,
     label: file.name,
     value: file,
   }));
 
   return (
-    <Box flexDirection="column" flexGrow={1} paddingRight={1}>
+    <Box flexDirection="column" width={width} paddingRight={1}>
       <Box
         flexDirection="column"
         borderStyle="round"
@@ -42,16 +51,15 @@ export function EnvSelector({
         {isActive ? (
           <SelectInput
             items={items}
+            initialIndex={index}
             onSelect={(item) => onSelect(item.value)}
-            onHighlight={
-              onHighlight ? (item) => onHighlight(item.value) : undefined
-            }
+            onHighlight={(item) => setHighlightedEnv(item.value)}
             isFocused={isActive}
           />
         ) : (
           <Box flexDirection="column">
             {items.map((item) => {
-              const isHighlighted = highlightedFile?.path === item.value.path;
+              const isHighlighted = highlighted?.path === item.value.path;
               return (
                 <Box key={item.key} flexDirection="row">
                   <Text color={isHighlighted ? "cyan" : "gray"}>

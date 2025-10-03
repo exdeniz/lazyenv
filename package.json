@@ -1,18 +1,42 @@
 {
   "name": "@exdeniz/lazyenv",
   "version": "1.0.5",
-  "description": "TUI utility for switching .env files and running commands",
-  "type": "module",
+  "author": "exdeniz",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/exdeniz/lazyenv.git"
+  },
+  "devDependencies": {
+    "@nanostores/react": "^1.0.0",
+    "@types/node": "^24.6.2",
+    "@types/react": "^19.2.0",
+    "figures": "^6.1.0",
+    "ink": "^6.3.1",
+    "ink-select-input": "^6.2.0",
+    "ink-syntax-highlight": "^2.0.2",
+    "nanostores": "^1.0.1",
+    "oxlint": "^1.19.0",
+    "react": "^19.2.0",
+    "react-devtools-core": "^6.1.5",
+    "tsdown": "^0.15.6",
+    "typescript": "^5.9.3"
+  },
   "bin": {
     "lazyenv": "./dist/index.js"
   },
-  "scripts": {
-    "dev": "bun run src/index.tsx",
-    "build": "tsdown",
-    "start": "node dist/index.js",
-    "lint": "oxlint src",
-    "prepublishOnly": "bun run build"
+  "bugs": {
+    "url": "https://github.com/exdeniz/lazyenv/issues"
   },
+  "description": "TUI utility for switching .env files and running commands",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "homepage": "https://github.com/exdeniz/lazyenv#readme",
   "keywords": [
     "env",
     "environment",
@@ -20,35 +44,13 @@
     "tui",
     "dotenv"
   ],
-  "author": "exdeniz",
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/exdeniz/lazyenv.git"
+  "scripts": {
+    "dev": "bun run src/index.tsx",
+    "build": "tsdown",
+    "start": "node dist/index.js",
+    "lint": "oxlint src",
+    "prepublishOnly": "bun run build"
   },
-  "bugs": {
-    "url": "https://github.com/exdeniz/lazyenv/issues"
-  },
-  "homepage": "https://github.com/exdeniz/lazyenv#readme",
-  "files": [
-    "dist",
-    "README.md",
-    "LICENSE"
-  ],
-  "engines": {
-    "node": ">=20.0.0"
-  },
-  "devDependencies": {
-    "@types/node": "^24.6.2",
-    "@types/react": "^19.2.0",
-    "figures": "^6.1.0",
-    "ink": "^6.3.1",
-    "ink-select-input": "^6.2.0",
-    "ink-syntax-highlight": "^2.0.2",
-    "oxlint": "^1.19.0",
-    "react": "^19.2.0",
-    "react-devtools-core": "^6.1.5",
-    "tsdown": "^0.15.6",
-    "typescript": "^5.9.3"
-  }
+  "type": "module"
 }

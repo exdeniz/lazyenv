@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { render, Text, Box, useInput, useApp, useStdout } from "ink";
+import { useStore } from "@nanostores/react";
 import { copyFile } from "node:fs/promises";
 import { spawn } from "node:child_process";
 import { cwd } from "node:process";
@@ -11,41 +12,36 @@ import { EnvSelector } from "./components/EnvSelector.js";
 import { CommandModal } from "./components/CommandModal.js";
 import { EnvPreview } from "./components/EnvPreview.js";
 import type { EnvFile, Command } from "./types.js";
-
-type AppState = "loading" | "selectEnv" | "running" | "done" | "error";
+import {
+  appState,
+  error,
+  commands,
+  selectedEnv,
+  highlightedEnv,
+  activePanel,
+  showCommandModal,
+  terminalHeight,
+  setAppState,
+  setError,
+  setEnvFiles,
+  setCommands,
+  setSelectedEnv,
+  toggleActivePanel,
+  scrollPreview,
+  setShowCommandModal,
+  setTerminalHeight,
+} from "./stores.js";
 
 function App() {
   const { exit } = useApp();
   const { stdout } = useStdout();
-  const [state, setState] = useState<AppState>("loading");
-  const [envFiles, setEnvFiles] = useState<EnvFile[]>([]);
-  const [commands, setCommands] = useState<Command[]>([]);
-  const [selectedEnv, setSelectedEnv] = useState<EnvFile | null>(null);
-  const [highlightedEnv, setHighlightedEnv] = useState<EnvFile | null>(null);
-  const [error, setError] = useState<string>("");
-  const [terminalHeight, setTerminalHeight] = useState(stdout?.rows || 24);
-  const [activePanel, setActivePanel] = useState<"selector" | "preview">(
-    "selector",
-  );
-  const [previewScroll, setPreviewScroll] = useState(0);
-  const [showCommandModal, setShowCommandModal] = useState(false);
 
-  // Calculate dynamic width for left panel based on longest file name
-  const leftPanelWidth = React.useMemo(() => {
-    if (envFiles.length === 0) return 30;
-
-    const maxFileNameLength = Math.max(
-      ...envFiles.map((file) => file.name.length),
-    );
-    const titleLength = "Select .env file:".length;
-
-    // Take the longest between file names and title, add padding for borders and margins
-    const contentWidth = Math.max(maxFileNameLength, titleLength) + 8;
-    const minWidth = 25;
-    const maxWidth = 50;
-
-    return Math.max(Math.min(contentWidth, maxWidth), minWidth);
-  }, [envFiles]);
+  // Subscribe only to stores needed for rendering
+  const state = useStore(appState);
+  const errorMsg = useStore(error);
+  const modal = useStore(showCommandModal);
+  const selected = useStore(selectedEnv);
+  const height = useStore(terminalHeight);
 
   // Handle keyboard input
   useInput((input, key) => {
@@ -56,52 +52,51 @@ function App() {
     }
 
     // Close modal on Esc
-    if (key.escape && showCommandModal) {
+    if (key.escape && showCommandModal.get()) {
       setShowCommandModal(false);
       return;
     }
 
     // Only handle panel switching and scrolling in selectEnv state
-    if (state !== "selectEnv" || showCommandModal) return;
+    if (appState.get() !== "selectEnv" || showCommandModal.get()) return;
 
     // Switch panels with Tab
     if (key.tab) {
-      setActivePanel((prev) => (prev === "selector" ? "preview" : "selector"));
+      toggleActivePanel();
       return;
     }
 
     // Handle preview mode
-    if (activePanel === "preview") {
+    if (activePanel.get() === "preview") {
+      const current = highlightedEnv.get();
       // Enter selects the highlighted file
-      if (key.return && highlightedEnv) {
-        handleEnvSelect(highlightedEnv);
+      if (key.return && current) {
+        handleEnvSelect(current);
         return;
       }
 
       if (key.upArrow) {
-        setPreviewScroll((prev) => Math.max(0, prev - 1));
+        scrollPreview(-1);
       } else if (key.downArrow) {
-        setPreviewScroll((prev) => prev + 1);
+        scrollPreview(1);
       }
     }
   });
 
   useEffect(() => {
-    const handleResize = () => {
-      if (stdout) {
-        setTerminalHeight(stdout.rows);
-      }
-    };
-
     if (stdout) {
-      stdout.on("resize", handleResize);
-    }
+      setTerminalHeight(stdout.rows);
 
-    return () => {
-      if (stdout) {
+      const handleResize = () => {
+        setTerminalHeight(stdout.rows);
+      };
+
+      stdout.on("resize", handleResize);
+
+      return () => {
         stdout.off("resize", handleResize);
-      }
-    };
+      };
+    }
   }, [stdout]);
 
   useEffect(() => {
@@ -112,7 +107,7 @@ function App() {
 
         if (files.length === 0) {
           setError("No .env.* files found in current directory");
-          setState("error");
+          setAppState("error");
           return;
         }
 
@@ -120,21 +115,15 @@ function App() {
 
         setEnvFiles(files);
         setCommands(scripts);
-        setHighlightedEnv(files[0] || null);
-        setState("selectEnv");
+        setAppState("selectEnv");
       } catch (err) {
         setError(err instanceof Error ? err.message : "Unknown error");
-        setState("error");
+        setAppState("error");
       }
     }
 
     init();
   }, []);
-
-  // Reset scroll when highlighted file changes
-  useEffect(() => {
-    setPreviewScroll(0);
-  }, [highlightedEnv]);
 
   const handleEnvSelect = async (file: EnvFile) => {
     try {
@@ -142,16 +131,17 @@ function App() {
       const targetPath = `${cwd()}/.env`;
       await copyFile(file.path, targetPath);
 
-      if (commands.length > 1) {
+      const cmds = commands.get();
+      if (cmds.length > 1) {
         setShowCommandModal(true);
-      } else if (commands.length === 1) {
-        runCommand(commands[0]);
+      } else if (cmds.length === 1) {
+        runCommand(cmds[0]);
       } else {
-        setState("done");
+        setAppState("done");
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to copy .env file");
-      setState("error");
+      setAppState("error");
     }
   };
 
@@ -165,7 +155,7 @@ function App() {
   };
 
   const runCommand = (command: Command) => {
-    setState("running");
+    setAppState("running");
 
     // Clear screen and exit alternate screen buffer before running command
     process.stdout.write("\x1b[?1049l"); // Exit alternate screen
@@ -198,14 +188,15 @@ function App() {
   if (state === "error") {
     return (
       <Box>
-        <Text color="red">Error: {error}</Text>
+        <Text color="red">Error: {errorMsg}</Text>
       </Box>
     );
   }
 
   if (state === "selectEnv") {
+    const panel = activePanel.get();
     const hints =
-      activePanel === "selector"
+      panel === "selector"
         ? "↑↓: Navigate | Enter: Select | Tab: Switch to Preview | q: Quit"
         : "↑↓: Scroll | Tab: Switch to Selector | q: Quit";
 
@@ -213,36 +204,20 @@ function App() {
       <Box
         flexDirection="column"
         width="100%"
-        height={terminalHeight}
+        height={height}
         borderStyle="round"
         borderColor="white"
         padding={1}
       >
         <Box flexDirection="row" flexGrow={1}>
-          <Box width={leftPanelWidth}>
-            <EnvSelector
-              envFiles={envFiles}
-              onSelect={handleEnvSelect}
-              onHighlight={setHighlightedEnv}
-              isActive={activePanel === "selector" && !showCommandModal}
-              highlightedFile={highlightedEnv}
-            />
-          </Box>
-          <Box flexGrow={1}>
-            <EnvPreview
-              filePath={highlightedEnv?.path || null}
-              scrollOffset={previewScroll}
-              isActive={activePanel === "preview" && !showCommandModal}
-              maxHeight={terminalHeight - 4}
-            />
-          </Box>
+          <EnvSelector onSelect={handleEnvSelect} />
+          <EnvPreview maxHeight={height - 4} />
         </Box>
         <Box borderStyle="single" borderColor="gray" paddingX={1} marginTop={1}>
           <Text dimColor>{hints}</Text>
         </Box>
-        {showCommandModal && (
+        {modal && (
           <CommandModal
-            commands={commands}
             onSelect={handleCommandSelect}
             onClose={handleCloseModal}
           />
@@ -262,7 +237,7 @@ function App() {
   if (state === "done") {
     return (
       <Box>
-        <Text color="green">✓ Done! {selectedEnv?.name} copied to .env</Text>
+        <Text color="green">✓ Done! {selected?.name} copied to .env</Text>
       </Box>
     );
   }
