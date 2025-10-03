@@ -1,6 +1,6 @@
 {
   "name": "@exdeniz/lazyenv",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "TUI utility for switching .env files and running commands",
   "type": "module",
   "bin": {
@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "bun run src/index.tsx",
-    "build": "bun build src/index.tsx --target=node --outdir=dist --format=esm",
+    "build": "tsdown",
     "start": "node dist/index.js",
     "lint": "oxlint src",
     "prepublishOnly": "bun run build"
@@ -50,6 +50,7 @@
     "@types/node": "^24.6.2",
     "@types/react": "^19.2.0",
     "oxlint": "^1.19.0",
+    "tsdown": "^0.15.6",
     "typescript": "^5.9.3"
   }
 }
