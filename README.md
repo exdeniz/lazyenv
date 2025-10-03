@@ -19,7 +19,7 @@
 
 ## 📸 Preview
 
-![lazyenv preview](screenshot.png)
+![lazyenv preview](./screenshot.png)
 
 ## 📦 Installation
 
