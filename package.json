@@ -1,6 +1,6 @@
 {
   "name": "@exdeniz/lazyenv",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "TUI utility for switching .env files and running commands",
   "type": "module",
   "bin": {
@@ -36,19 +36,19 @@
     "LICENSE"
   ],
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.0.0"
   },
   "dependencies": {
     "ink": "^6.3.1",
-    "ink-select-input": "^6.0.0",
-    "ink-syntax-highlight": "^2.0.0",
-    "react": "^19.0.0",
+    "ink-select-input": "^6.2.0",
+    "ink-syntax-highlight": "^2.0.2",
+    "react": "^19.2.0",
     "figures": "^6.1.0"
   },
   "devDependencies": {
-    "@types/node": "^22.10.2",
-    "@types/react": "^18.3.18",
-    "typescript": "^5.7.2",
-    "oxlint": "^0.15.0"
+    "@types/node": "^24.6.2",
+    "@types/react": "^19.2.0",
+    "typescript": "^5.9.3",
+    "oxlint": "^1.19.0"
   }
 }
