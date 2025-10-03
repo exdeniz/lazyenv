@@ -9,7 +9,11 @@ interface CommandModalProps {
   onClose: () => void;
 }
 
-export function CommandModal({ commands, onSelect, onClose }: CommandModalProps) {
+export function CommandModal({
+  commands,
+  onSelect,
+  onClose,
+}: CommandModalProps) {
   const items = commands.map((cmd, index) => ({
     key: `cmd-${index}`,
     label: cmd.name,
@@ -40,7 +44,7 @@ export function CommandModal({ commands, onSelect, onClose }: CommandModalProps)
         borderColor="yellow"
         padding={1}
         minWidth={50}
-        backgroundColor="black"
+        backgroundColor={"black"}
       >
         <Box marginBottom={1}>
           <Text bold color="yellow">
