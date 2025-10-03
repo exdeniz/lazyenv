@@ -1,0 +1,38 @@
+{
+  "name": "env-switcher",
+  "version": "1.0.0",
+  "description": "TUI utility for switching .env files and running commands",
+  "type": "module",
+  "bin": {
+    "env-switcher": "./dist/index.js"
+  },
+  "scripts": {
+    "dev": "bun run src/index.tsx",
+    "build": "bun build src/index.tsx --target=node --outdir=dist --format=esm",
+    "start": "node dist/index.js",
+    "lint": "oxlint src"
+  },
+  "keywords": [
+    "env",
+    "environment",
+    "cli",
+    "tui",
+    "dotenv"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "ink": "^5.0.1",
+    "ink-select-input": "^6.0.0",
+    "ink-syntax-highlight": "^2.0.0",
+    "react": "^18.3.1",
+    "cosmiconfig": "^9.0.0",
+    "figures": "^6.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/react": "^18.3.18",
+    "typescript": "^5.7.2",
+    "oxlint": "^0.15.0"
+  }
+}

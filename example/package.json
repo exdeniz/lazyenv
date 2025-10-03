@@ -1,0 +1,11 @@
+{
+  "name": "example-app",
+  "version": "1.0.0",
+  "description": "Example application for env-switcher",
+  "scripts": {
+    "dev": "echo 'Starting development server...' && node server.js",
+    "build": "echo 'Building project...'",
+    "test": "echo 'Running tests...'",
+    "start": "echo 'Starting production server...' && node server.js"
+  }
+}
