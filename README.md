@@ -1,121 +1,100 @@
 # lazyenv
 
-TUI утилита для быстрого переключения между .env файлами и запуска команд.
+> 🚀 A blazing-fast TUI for switching between `.env` files and running npm scripts
 
-## Возможности
+[![npm version](https://img.shields.io/npm/v/@exdeniz/lazyenv.svg)](https://www.npmjs.com/package/@exdeniz/lazyenv)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-- 🔍 Автоматическое сканирование всех `.env.*` файлов в текущей директории
-- 🎨 Интерактивный TUI интерфейс на основе Ink
-- 📋 Двухпанельный интерфейс с предпросмотром содержимого .env файлов
-- 🎯 Модальное окно для выбора команд (в стиле LazyDocker)
-- 🚀 Автоматическое копирование выбранного `.env.*` файла в `.env`
-- ⌨️ Выбор команды для запуска из scripts в package.json
-- 🖥️ Полноэкранный режим с использованием alternate screen buffer
+[🇷🇺 Русская версия](./README_RU.md)
 
-## Установка
+## ✨ Features
+
+- 🔍 **Auto-discover** all `.env.*` files in your project
+- 🎨 **Interactive TUI** built with React + Ink
+- 📋 **Dual-panel interface** with live file preview
+- 🎯 **Command modal** for selecting npm scripts
+- 🚀 **One-click workflow**: select env → copy to `.env` → run command
+- ⌨️ **Intuitive keyboard navigation**
+- 🖥️ **Clean terminal experience** with alternate screen buffer
+
+## 📸 Preview
+
+![lazyenv preview](screenshot.png)
+
+## 📦 Installation
 
 ```bash
 npm install -g @exdeniz/lazyenv
 ```
 
-Или с помощью npx (без установки):
+Or use directly with npx (no installation):
 
 ```bash
 npx @exdeniz/lazyenv
 ```
 
-## Использование
+## 🚀 Usage
 
-Просто запустите команду в корне вашего проекта:
+Run in your project root:
 
 ```bash
 lazyenv
 ```
 
-Или с помощью npx:
+### ⌨️ Keyboard Controls
 
-```bash
-npx @exdeniz/lazyenv
+| Key     | Action                               |
+| ------- | ------------------------------------ |
+| `↑↓`    | Navigate files / Scroll preview      |
+| `Tab`   | Switch between panels                |
+| `Enter` | Select env file & open command modal |
+| `Esc`   | Close modal                          |
+| `q`     | Quit                                 |
+
+## 🔄 How It Works
+
+1. Scans current directory for `.env.*` files
+2. Displays interactive list with syntax-highlighted preview
+3. On selection, copies chosen file to `.env`
+4. Reads scripts from your `package.json`
+5. Shows modal to select which command to run
+6. Executes command with new environment variables
+
+## 📁 File Pattern
+
+Works with any `.env.*` files:
+
+```
+.env.local
+.env.development
+.env.staging
+.env.production
 ```
 
-### Управление
-
-- `↑↓` - Навигация по списку файлов или прокрутка предпросмотра
-- `Tab` - Переключение между панелями (список файлов ↔ предпросмотр)
-- `Enter` - Выбор .env файла и открытие модального окна с командами
-- `Esc` - Закрыть модальное окно
-- `q` - Выход из приложения
-
-## Как это работает
-
-1. Утилита сканирует текущую директорию на наличие `.env.*` файлов
-2. Показывает интерактивный список найденных файлов с предпросмотром
-3. После выбора файла (Enter) копирует его в `.env`
-4. Читает скрипты из `package.json` вашего проекта
-5. Если скриптов несколько - показывает модальное окно для выбора команды
-6. Запускает выбранную команду с новыми переменными окружения
-
-## Команды
-
-Утилита автоматически читает все скрипты из `scripts` секции вашего `package.json` и предлагает их для запуска после выбора `.env` файла.
-
-Пример `package.json`:
-
-```json
-{
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "test": "jest",
-    "start": "next start"
-  }
-}
-```
-
-Все эти команды будут доступны для выбора в модальном окне.
-
-## Структура .env файлов
-
-Утилита ищет файлы с паттерном `.env.*`, например:
-
-- `.env.local`
-- `.env.development`
-- `.env.stage-1`
-- `.env.stage-2`
-- `.env.production`
-
-## Разработка
-
-### Установка зависимостей
+## 🛠️ Development
 
 ```bash
+# Install dependencies
 bun install
-```
 
-### Запуск в режиме разработки
-
-```bash
+# Run in dev mode
 bun run dev
-```
 
-### Сборка
-
-```bash
+# Build
 bun run build
-```
 
-### Линтинг
-
-Проект использует [oxc-project](https://oxc.rs/) для линтинга:
-
-```bash
+# Lint
 bun run lint
 ```
 
-## Требования
+## 📋 Requirements
 
 - Node.js >= 18
 
-## Лицензия
+## 📄 License
 
 MIT
+
+---
+
+<p align="center">Made with ❤️ by <a href="https://github.com/exdeniz">@exdeniz</a></p>
