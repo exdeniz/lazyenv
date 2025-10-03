@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "bun run src/index.tsx",
-    "build": "bun build src/index.tsx --target=node --outdir=dist --format=esm --external react --external ink --external ink-select-input --external figures",
+    "build": "bun build src/index.tsx --target=node --outdir=dist --format=esm",
     "start": "node dist/index.js",
     "lint": "oxlint src",
     "prepublishOnly": "bun run build"
@@ -39,16 +39,17 @@
     "node": ">=20.0.0"
   },
   "dependencies": {
+    "figures": "^6.1.0",
     "ink": "^6.3.1",
     "ink-select-input": "^6.2.0",
     "ink-syntax-highlight": "^2.0.2",
     "react": "^19.2.0",
-    "figures": "^6.1.0"
+    "react-devtools-core": "^6.1.5"
   },
   "devDependencies": {
     "@types/node": "^24.6.2",
     "@types/react": "^19.2.0",
-    "typescript": "^5.9.3",
-    "oxlint": "^1.19.0"
+    "oxlint": "^1.19.0",
+    "typescript": "^5.9.3"
   }
 }
