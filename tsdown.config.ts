@@ -1,14 +1,23 @@
-import { defineConfig } from 'tsdown'
+import { defineConfig } from "tsdown";
 
 export default defineConfig({
-  entry: ['src/index.tsx'],
-  format: ['esm'],
-  platform: 'node',
-  outDir: 'dist',
+  entry: ["src/index.tsx"],
+  format: ["esm"],
+  platform: "node",
+  outDir: "dist",
   clean: true,
   shims: false,
-  noExternal: true,
-  external: [/^node:/, 'react-devtools-core'],
+  external: [
+    /^node:/,
+    "react",
+    "react-devtools-core",
+    "ink",
+    "ink-select-input",
+    "ink-syntax-highlight",
+    "figures",
+    "nanostores",
+    "@nanostores/react",
+  ],
   treeshake: {
     moduleSideEffects: false,
   },
@@ -17,4 +26,4 @@ export default defineConfig({
       inlineDynamicImports: true,
     },
   },
-})
+});
